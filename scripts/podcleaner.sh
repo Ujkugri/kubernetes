@@ -3,7 +3,7 @@
 function usage() {
     cat <<USAGE
 
-    Usage: $0 -s STATUS -c CONTEXT [-a -all] [-n NAMESPACE] [-f]
+    Usage: $0 [-s --status] [-c --context] [-a --all] [-n --namespace] [-f --force]
 
     Status are:
         ContainerCreating
@@ -13,12 +13,12 @@ function usage() {
         ImagePullBackOff
 
     Options are:
-        -h                   Display help for this script.
-        -c CONTEXT           Required. Kuberntes Context to operatore.
-        -s STATUS            Required. Wihich Pod Status to delete.
-        -a, -all             Optional. Delete Pods over all Namespaces.
-        -n NAMESPACE         Optional. Delete Pods over a specific Namespace.
-        -f                   Optional. Trigger forcefull deletion.
+        -h, --help            Display help for this script.
+        -c, --context         Required. Kuberntes Context to operatore.
+        -s, --status          Required. Wihich Pod Status to delete.
+        -a, --all             Optional. Delete Pods over all Namespaces.
+        -n, --namespace       Optional. Delete Pods over a specific Namespace.
+        -f, --force           Optional. Trigger forcefull deletion.
 USAGE
     exit 1
 }
@@ -36,17 +36,17 @@ all_namespaces=false
 
 while getopts "han:s:fc:" option; do
    case $option in
-      h | help)      usage ;;
+      h | -help)      usage ;;
 
-      c | context)   CONTEXT="$OPTARG" ;;
+      c | -context)                CONTEXT="$OPTARG" ;;
 
-      s | status)    STATUS="$OPTARG"  ;;
+      s | -status)                 STATUS="$OPTARG"  ;;
 
-      a | all )      all_namespaces=true ;;
+      a | -all)                    all_namespaces=true ;;
 
-      n)             NAMESPACE="$OPTARG" ;;
+      n | -namespace)              NAMESPACE="$OPTARG" ;;
 
-      f)             force=" --force" ;;
+      f | -force)                  force=" --force" ;;
 
       \?)            # Invalid option
                      echo "Error: Invalid option"
