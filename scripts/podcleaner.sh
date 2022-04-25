@@ -7,12 +7,12 @@ function usage() {
 
     Usage: $0 <options>
 
-    -s | --status <Status>               : Remove Pods with this Status.
-    -c | --context <Context>             : Selects Kubernetes Cluster to operate.
-    -n | --namespace <Namespace>         : Namespace to operate.
-    -a | --all-namespaces                : Operate over all Namespaces.
-    -f | --force                         : Force deletion of Pods.
-    -h | --help                          : Displays help
+    -s <Status>               : Remove Pods with this Status.
+    -c <Context>              : Selects Kubernetes Cluster to operate.
+    -n <Namespace>            : Namespace to operate.
+    -a                        : Operate over all Namespaces.
+    -f                        : Force deletion of Pods.
+    -h                        : Displays help
 
     Available Status are:
         ContainerCreating
@@ -22,6 +22,13 @@ function usage() {
         ImagePullBackOff
 USAGE
 
+    exit 1
+}
+
+# For errorhandling
+errorExit () {
+    echo -e "\n    Error: $1"
+    usage
     exit 1
 }
 
@@ -38,65 +45,42 @@ all_namespaces=false
 
 # Process command line options. See usage above for supported options
 function processOptions() {
-    while [[ $# -gt 0 ]]; do
-        case "$1" in
-           -h | --help)
-              usage
-              exit 0
-           ;;
 
-           -c | --context)
-              CONTEXT="$2"
-              if [ -z $2 ]; then
+while getopts "han:s:fc:" option; do
+   case $option in
+      h)
+         usage
+      ;;
 
-                 echo -e "\n     Error: Please provide a valid context to operate on."
-                 usage
-                 exit 1
-              fi
-              shift 2
-           ;;
+      c)
+         CONTEXT="$OPTARG"
+      ;;
 
-           -s | --status)
-             STATUS="$2"
-              if [ -z $2 ]; then
+      s)
+         STATUS="$OPTARG"
+      ;;
 
-                 echo -e "\n     Error: Please provide a valid status."
-                 usage
-                 exit 1
-              fi
-             shift 2
-           ;;
+      a)
+         all_namespaces=true
+      ;;
 
-           -a | --all-namespaces)
-              all_namespaces=true
-              shift 1
-           ;;
+      n)
+         NAMESPACE="$OPTARG"
+      ;;
 
-           -n | --namespace)
-              NAMESPACE="$2"
-              if [ -z $2 ]; then
+      f)
+         force=" --force"
+      ;;
 
-                 echo -e "\n     Error: Please provide a valid namespace to operate on."
-                 usage
-                 exit 1
-              fi
-              shift 2
-           ;;
+      \?)
 
-           -f | --force)
-              force=" --force"
-              shift 1
-           ;;
+             errorExit "Option not defined or has no argument!"
+      ;;
 
-           \?)
-              # Invalid option
-              echo "Error: Invalid option"
-              usage
-            ;;
-
-        esac
-    done
+   esac
+done 2> /dev/null
 }
+
 
 # Main function for deleting pods of certain Status
 function delete() {
@@ -114,6 +98,18 @@ fi
 
 }
 
+function option_validation() {
+
+  # To make sure deletion happen either over all namespace or one specific
+  if ([ "$NAMESPACE" ] && [  $all_namespaces == true ])  || ([ -z "$NAMESPACE" ] && [  $all_namespaces == false ]) ; then
+    errorExit "Either choose operation over all Namespaces (-a) or over a specific Namespace (-n NAMESPACE)!"
+  fi
+
+  # To make sure the given context is valid
+  kubectl --context=$CONTEXT cluster-info > /dev/null 2>&1 || errorExit "Please provide a valid context to operate on."
+
+}
+
 function status() {
 case "$STATUS" in
   "ContainerCreating"|"ImagePullBackOff"|"Error"|"Evicted"|"ErrImagePull")
@@ -122,20 +118,28 @@ case "$STATUS" in
   ;;
 
   *)
-     echo -e "\n     Given Status in not valid!"
-     usage
+     errorExit "Given Status in not valid!"
   ;;
+
+  \?)
+  # Invalid option
+  echo "Error: Invalid option"
+  usage
+  ;;
+
+
 esac
 }
 
 function main() {
   processOptions "$@"
 
-  # To make sure deletion happens eiter over all namespace or one specific
-  if ([ "$NAMESPACE" ] && [  $all_namespaces == true ])  || ([ -z "$NAMESPACE" ] && [  $all_namespaces == false ]) ; then
-    echo -e "\n     Error: Either choose operation over all Namespaces (-a) or over a specific Namespace (-n NAMESPACE)!"
-    exit 1
-  fi
+#  # To make sure deletion happen either over all namespace or one specific
+#  if ([ "$NAMESPACE" ] && [  $all_namespaces == true ])  || ([ -z "$NAMESPACE" ] && [  $all_namespaces == false ]) ; then
+#    errorExit "Either choose operation over all Namespaces (-a) or over a specific Namespace (-n NAMESPACE)!"
+#  fi
+
+  option_validation
 
   status
 }
