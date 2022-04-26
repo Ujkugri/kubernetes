@@ -82,7 +82,6 @@ while getopts "han:s:fc:" option; do
 done 2> /dev/null
 }
 
-
 # Main function for deleting pods of certain Status
 function delete() {
 
@@ -134,11 +133,6 @@ esac
 
 function main() {
   processOptions "$@"
-
-#  # To make sure deletion happen either over all namespace or one specific
-#  if ([ "$NAMESPACE" ] && [  $all_namespaces == true ])  || ([ -z "$NAMESPACE" ] && [  $all_namespaces == false ]) ; then
-#    errorExit "Either choose operation over all Namespaces (-a) or over a specific Namespace (-n NAMESPACE)!"
-#  fi
 
   option_validation
 
