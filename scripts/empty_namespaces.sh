@@ -10,7 +10,7 @@ OBJECTS=pods,jobs,cronjobs,deployments,daemonsets,statefulsets
 echo "Empty Namespaces are:"
 for NAMESPACE in $(kubectl get ns --no-headers | awk '{ print $1 }')
 do 
-  amount=$(kubectl get --no-headers pods,jobs,cronjobs,deployments,daemonsets,statefulsets -n $NAMESPACE 2>/dev/null | wc -l)
+  amount=$(kubectl get --no-headers ${OBJECTS} -n $NAMESPACE 2>/dev/null | wc -l)
   case $NAMESPACE in
     "kube-node-lease"|"default"|"kube-public"|"local") ;;
     *)  
