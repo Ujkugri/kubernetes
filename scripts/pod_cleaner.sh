@@ -75,7 +75,7 @@ while getopts "han:s:fc:" option; do
 
       \?)
 
-             errorExit "Option not defined or has no argument!"
+            errorExit "Option not defined or has no argument!"
       ;;
 
    esac
@@ -122,9 +122,9 @@ case "$STATUS" in
   ;;
 
   \?)
-  # Invalid option
-  echo "Error: Invalid option"
-  usage
+     # Invalid option
+     errorExit "Invalid Option" 
+     usage
   ;;
 
 
