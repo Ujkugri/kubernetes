@@ -21,6 +21,7 @@ function usage() {
         ErrImagePull
         Evicted
         ImagePullBackOff
+        Terminating
 USAGE
 
     exit 1
