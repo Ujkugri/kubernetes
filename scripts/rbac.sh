@@ -9,7 +9,7 @@ function usage() {
 
     Usage: $0 <options>
 
-    -k | --kind <Kkind>                                    Options are Roles, RoleBindings, ClusterRoles and CusterRoleBindings
+    -k | --kind <Kind>                                    Options are Roles, RoleBindings, ClusterRoles and CusterRoleBindings
     -c | --context <Context>                               Selects Kubernetes Cluster to operate.
     -n | --namespace <Namespace1,Namespace2,...>           Namespace to operate. Can be one Namespace or array of Namespaces.
     -h | --help                                            Displays help
@@ -20,9 +20,11 @@ USAGE
 
 # For errorhandling
 errorExit () {
+
     echo -e "\n    Error: $1"
     usage
     exit 1
+
 }
 
 # if no arguments are provided, return usage function
@@ -42,42 +44,43 @@ while [ $# -gt 0 ]; do
   case $key in
   -h | --help)
      usage
-   ;;
+  ;;
     
   -c | --context)
     kubectl="kubectl --context $2"
     shift
     shift
-    ;;
+  ;;
 
   -n | --namespace)
     NAMESPACE="$2" 
     shift
     shift
-    ;;
+  ;;
 
   -k | --kind)
     KIND="$2"
     shift
     shift
-
   ;;
+
   --* | -*)
     shift
     usage
     break
-    ;;
+  ;;
 
   \?)
     errorExit "Option not defined or has no argument!"
     usage
-    ;;
+  ;;
   esac
 done 2> /dev/null
 }
 
 
 function rolebindings() {
+
   if [ -z "$NAMESPACE" ]; then
     NAMESPACE=$(kubectl config view --minify --output 'jsonpath={..namespace}')
     kubectl get rolebindings -n $NAMESPACE -o custom-columns='NAMESPACE:metadata.namespace,KIND:kind,ROLE:roleRef.name,ROLEKIND:roleRef.kind,NAME:metadata.name,SERVICE-ACCOUNTS:subjects[?(@.kind=="ServiceAccount")].name'
@@ -89,9 +92,11 @@ function rolebindings() {
       kubectl get rolebindings -n $ns -o custom-columns='NAMESPACE:metadata.namespace,KIND:kind,ROLE:roleRef.name,ROLEKIND:roleRef.kind,NAME:metadata.name,SERVICE-ACCOUNTS:subjects[?(@.kind=="ServiceAccount")].name'  --no-headers
     done
   fi
+
 }
 
 function roles() {
+
   if [ -z "$NAMESPACE" ] ; then
     NAMESPACE=$(kubectl config view --minify --output 'jsonpath={..namespace}')
     echo -e "NAMESPACE KIND NAME RESOURCES \t VERB"
@@ -104,9 +109,11 @@ function roles() {
       kubectl get roles --no-headers -n $ns | awk -v NAMESPACE=$ns '{ system ("kubectl -n " NAMESPACE " get role " $1 " -o jsonpath='\''{range .rules[*]}{\"\\t\"}{.resources}{\"\\t\"}{.verbs}{\"\\n\"}{end}'\'' \|  sed \"s/^/ "NAMESPACE" Role " $1 "  \/\"  ")  }' 
     done
   fi
+
 }
 
 function clusterrolebindings() {
+
   echo -e "NAMESPACE KIND ROLE ROLEKIND NAME SERVICE-ACCOUNTS"
   kubectl get clusterrolebindings -o custom-columns='NAMESPACE:metadata.namespace,KIND:kind,ROLE:roleRef.name,ROLEKIND:roleRef.kind,NAME:metadata.name,SERVICE-ACCOUNTS:subjects[?(@.kind=="ServiceAccount")].name' --no-headers
 
@@ -124,10 +131,10 @@ function main() {
   processOptions "$@"
   case "$KIND" in
     "Roles")
-      roles 
+      roles | column -t
     ;;
     "ClusterRoles")
-      clusterroles 
+      clusterroles | column -t
     ;;
     "RoleBindings")
        rolebindings
@@ -144,8 +151,9 @@ function main() {
       usage
     ;;
   esac
+
 }
 
 ######### Main #########
 
-main "$@" | column -t
+main "$@" 
