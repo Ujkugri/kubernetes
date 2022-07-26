@@ -9,10 +9,10 @@ function usage() {
 
     Usage: $0 <options>
 
-    -k | --kind <Kkind>                                   : Options are Roles, RoleBindings, ClusterRoles and CusterRoleBindings
-    -c | --context <Context>                              : Selects Kubernetes Cluster to operate.
-    -n | --namespace <Namespace1,Namespace2,...>          : Namespace to operate. Can be one Namespace or array of Namespaces.
-    -h                                                    : Displays help
+    -k | --kind <Kkind>                                    Options are Roles, RoleBindings, ClusterRoles and CusterRoleBindings
+    -c | --context <Context>                               Selects Kubernetes Cluster to operate.
+    -n | --namespace <Namespace1,Namespace2,...>           Namespace to operate. Can be one Namespace or array of Namespaces.
+    -h | --help                                            Displays help
 
 USAGE
     exit 1
