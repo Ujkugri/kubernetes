@@ -80,13 +80,13 @@ done 2> /dev/null
 function rolebindings() {
   if [ -z "$NAMESPACE" ]; then
     NAMESPACE=$(kubectl config view --minify --output 'jsonpath={..namespace}')
-    kubectl get rolebindings -n $NAMESPACE -o custom-columns='NAMESPACE:metadata.namespace,KIND:kind,ROLE:roleRef.name,NAME:metadata.name,SERVICE-ACCOUNTS:subjects[?(@.kind=="ServiceAccount")].name'
+    kubectl get rolebindings -n $NAMESPACE -o custom-columns='NAMESPACE:metadata.namespace,KIND:kind,ROLE:roleRef.name,ROLEKIND:roleRef.kind,NAME:metadata.name,SERVICE-ACCOUNTS:subjects[?(@.kind=="ServiceAccount")].name'
   else
     NAMESPACES=$(echo $NAMESPACE | sed "s/,/ /")
-    echo -e "NAMESPACE KIND ROLE NAME SERVICE-ACCOUNTS"
+    echo -e "NAMESPACE KIND ROLE ROLEKIND NAME SERVICE-ACCOUNTS"
     for ns in $NAMESPACES
     do
-      kubectl get rolebindings -n $ns -o custom-columns='NAMESPACE:metadata.namespace,KIND:kind,ROLE:roleRef.name,NAME:metadata.name,SERVICE-ACCOUNTS:subjects[?(@.kind=="ServiceAccount")].name'  --no-headers
+      kubectl get rolebindings -n $ns -o custom-columns='NAMESPACE:metadata.namespace,KIND:kind,ROLE:roleRef.name,ROLEKIND:roleRef.kind,NAME:metadata.name,SERVICE-ACCOUNTS:subjects[?(@.kind=="ServiceAccount")].name'  --no-headers
     done
   fi
 }
@@ -107,8 +107,8 @@ function roles() {
 }
 
 function clusterrolebindings() {
-  echo -e "NAMESPACE KIND ROLE NAME SERVICE-ACCOUNTS"
-  kubectl get clusterrolebindings -o custom-columns='NAMESPACE:metadata.namespace,KIND:kind,ROLE:roleRef.name,NAME:metadata.name,SERVICE-ACCOUNTS:subjects[?(@.kind=="ServiceAccount")].name' --no-headers
+  echo -e "NAMESPACE KIND ROLE ROLEKIND NAME SERVICE-ACCOUNTS"
+  kubectl get clusterrolebindings -o custom-columns='NAMESPACE:metadata.namespace,KIND:kind,ROLE:roleRef.name,ROLEKIND:roleRef.kind,NAME:metadata.name,SERVICE-ACCOUNTS:subjects[?(@.kind=="ServiceAccount")].name' --no-headers
 
 }
 
