@@ -167,8 +167,4 @@ function main() {
 
 ######### Main #########
 
-if [ "main |wc -l"=="1" ]; then
-  errorExit "Current Configuration has no Output"
-fi
-
 main "$@"
