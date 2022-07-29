@@ -140,19 +140,19 @@ function main() {
   empty_variables
 
   case "$KIND" in
-    "Roles"|"Role")
+    "Roles"|"Role"|"roles"|"role")
       eval "echo -e 'NAMESPACE KIND NAME RESOURCES \t VERB';roles $RESOURCES $VERBS" 
     ;;
 
-    "ClusterRoles"|"ClusterRole")
+    "ClusterRoles"|"ClusterRole"|"clusterroles"|"clusterrole")
       eval "echo -e 'NAMESPACE KIND NAME RESOURCES \t VERB';clusterroles $RESOURCES $VERBS" 
     ;;
 
-    "RoleBindings"|"RoleBinding")
+    "RoleBindings"|"RoleBinding"|"rolebindings"|"rolebinding")
        eval "echo -e 'NAMESPACE KIND ROLE ROLEKIND NAME SERVICE-ACCOUNTS';rolebindings" 
     ;;
 
-    "ClusterRoleBindings"|"ClusterRoleBinding")
+    "ClusterRoleBindings"|"ClusterRoleBinding"|"clusterrolebindings"|"clusterrolebinding")
       eval "echo -e 'NAMESPACE KIND ROLE ROLEKIND NAME SERVICE-ACCOUNTS';clusterrolebindings" 
     ;;
 
@@ -166,5 +166,9 @@ function main() {
 }
 
 ######### Main #########
+
+if [ "main |wc -l"=="1" ]; then
+  errorExit "Current Configuration has no Output"
+fi
 
 main "$@"
