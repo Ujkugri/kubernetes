@@ -51,7 +51,7 @@ while [ $# -gt 0 ]; do
 
   who-can) 
     if ([ -z "$2" ] || [ -z "$3" ]) ; then
-      errorExit "The Option who-can needs a Resource and a Verb!" 
+      errorExit "The Subcommand who-can needs a Resource and a Verb!" 
     fi
     RESOURCES="| grep -i $3"
     VERBS="| grep -i $2"
@@ -129,7 +129,7 @@ function roles() {
 
 function clusterroles() {
 
-  kubectl get clusterroles --no-headers | awk '{ system ("kubectl get clusterrole " $1 " -o jsonpath='\''{range .rules[*]}{\"\\t\"}{.resources}{\"\\t\"}{.verbs}{\"\\n\"}{end}'\'' \|  sed \"s/^/ <None>  ClusterRole  " $1 " \/\"  ")  }' | column -t
+  kubectl get clusterroles --no-headers | awk '{ system ("kubectl get clusterrole " $1 " -o jsonpath='\''{range .rules[*]}{\"\\t\"}{.resources}{\"\\t\"}{.verbs}{\"\\n\"}{end}'\'' \|  sed \"s/^/ <None>  ClusterRole  " $1 " \/\"  ")  }' 
 
 }
 
