@@ -21,6 +21,7 @@ function usage() {
                                                                     Lists all Roles who can get Pods        
 USAGE
     exit 1
+    
 }
 
 # For errorhandling
@@ -89,6 +90,7 @@ while [ $# -gt 0 ]; do
   ;;
   esac
 done 2> /dev/null
+
 }
 
 
@@ -123,7 +125,6 @@ function roles() {
   do 
     kubectl get roles --no-headers -n $ns | awk -v NAMESPACE=$ns '{ system ("kubectl -n " NAMESPACE " get role " $1 " -o jsonpath='\''{range .rules[*]}{\"\\t\"}{.resources}{\"\\t\"}{.verbs}{\"\\n\"}{end}'\'' \|  sed \"s/^/ "NAMESPACE" Role " $1 "  \/\"  ")  }' 
   done
-
 
 }
 
