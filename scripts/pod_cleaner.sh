@@ -113,7 +113,7 @@ function option_validation() {
 
 function status() {
 case "$STATUS" in
-  "ContainerCreating"|"CrashLoopBackOff"|"ImagePullBackOff"|"Error"|"Evicted"|"ErrImagePull")
+  "ContainerCreating"|"CrashLoopBackOff"|"ImagePullBackOff"|"Error"|"Evicted"|"ErrImagePull"|"Terminating")
      echo -e "\n     Removing Pods with the given Status $STATUS"
      delete
   ;;
