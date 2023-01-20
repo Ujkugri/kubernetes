@@ -22,6 +22,7 @@ function usage() {
         Evicted
         ImagePullBackOff
         Terminating
+        Pending
 USAGE
 
     exit 1
@@ -113,7 +114,7 @@ function option_validation() {
 
 function status() {
 case "$STATUS" in
-  "ContainerCreating"|"CrashLoopBackOff"|"ImagePullBackOff"|"Error"|"Evicted"|"ErrImagePull"|"Terminating")
+  "ContainerCreating"|"CrashLoopBackOff"|"ImagePullBackOff"|"Error"|"Evicted"|"ErrImagePull"|"Terminating"|"Pending")
      echo -e "\n     Removing Pods with the given Status $STATUS"
      delete
   ;;
