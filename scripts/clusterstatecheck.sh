@@ -18,26 +18,31 @@ printf -- "\n$magenta" "Checking for Pods and Containers.."
 
 if [[ $(kubectl get deploy -A --no-headers -o custom-columns="NAMESPACE:metadata.namespace,NAME:metadata.name,DESIRED:.spec.replicas,AVAILABLE:.status.availableReplicas" | awk ' $3!=$4 ') ]]; then
  printf -- "$red" "There are Deployments that have not the desired amount of ready Pods:"
- printf -- "$(kubectl get deploy -A -o custom-columns="NAMESPACE:metadata.namespace,NAME:metadata.name,DESIRED:.spec.replicas,AVAILABLE:.status.availableReplicas" | awk ' $3!=$4')\n" 
+ printf -- "$(kubectl get deploy -A -o custom-columns="NAMESPACE:metadata.namespace,NAME:metadata.name,DESIRED:.spec.replicas,AVAILABLE:.status.availableReplicas" | awk ' $3!=$4')\n"
+else
+ printf -- "${green}" "All Deployments have their desired amount of Replicas running." 
 fi
 
 if [[ $(kubectl get ds -A --no-headers | awk '$3!=$4 || $3!=$5 || $3!=$6 || $3!=$7') ]]; then
  printf -- "$red" "There are Daemonsets that have not the desired amount of ready Pods:"
  printf -- "$(kubectl get ds -A | awk '$3!=$4 || $3!=$5 || $3!=$6 || $3!=$7')\n"
+else
+ printf -- "${green}" "All Daemonsets have their desired amount of Replicas running." 
 fi
 
 if [[ $(kubectl get sts -A --no-headers -o custom-columns="NAMESPACE:metadata.namespace,NAME:metadata.name,DESIRED:.spec.replicas,AVAILABLE:.status.availableReplicas" | awk ' $3!=$4 ') ]];then
  printf -- "$red" "There are Statefulsets that have not the desired amount of ready Pods:"
  printf -- "$(kubectl get sts -A -o custom-columns="NAMESPACE:metadata.namespace,NAME:metadata.name,DESIRED:.spec.replicas,AVAILABLE:.status.availableReplicas" | awk ' $3!=$4 ')\n"
+else
+ printf -- "${green}" "All Statefulsets have their desired amount of Replicas running." 
 fi
 
-if [[ $(kubectl get pods -A -o custom-columns="NAMESPACE:metadata.namespace,POD:metadata.name,STATUS:status.phase,CONTAINERSTATUS:status.containerStatuses[*].ready" | grep -v Succeeded | grep false) ]]; then
+if [[ $(kubectl get pods -A --no-headers -o custom-columns="NAMESPACE:metadata.namespace,POD:metadata.name,STATUS:status.phase,CONTAINERSTATUS:status.containerStatuses[*].ready" | grep -v Succeeded | grep false) ]]; then
  printf -- "$red" "The following pods have nonready containers:"
  printf --  "$(kubectl get pods -A -o custom-columns="NAMESPACE:metadata.namespace,POD:metadata.name,STATUS:status.phase,CONTAINERSTATUS:status.containerStatuses[*].ready" | head -n1 && kubectl get pods -A -o custom-columns="NAMESPACE:metadata.namespace,POD:metadata.name,STATUS:status.phase,CONTAINERSTATUS:status.containerStatuses[*].ready" | grep -v Succeeded | grep false)\n"
 else 
- printf -- "${green}" "All containers are ready and all pods are running." 
+ printf -- "${green}" "All Containers are ready and all pods are running." 
 fi
-
 
 ##### Volumes
 printf -- "\n$magenta" "Checking for Volumes.."
