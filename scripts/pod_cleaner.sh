@@ -16,6 +16,7 @@ function usage() {
 
     Available Status are:
         ContainerCreating
+        CreateContainerConfigError
         CrashLoopBackOff
         Error
         ErrImagePull
@@ -114,7 +115,7 @@ function option_validation() {
 
 function status() {
 case "$STATUS" in
-  "ContainerCreating"|"CrashLoopBackOff"|"ImagePullBackOff"|"Error"|"Evicted"|"ErrImagePull"|"Terminating"|"Pending")
+  "ContainerCreating"|"CreateContainerConfigError"|"CrashLoopBackOff"|"ImagePullBackOff"|"Error"|"Evicted"|"ErrImagePull"|"Terminating"|"Pending")
      echo -e "\n     Removing Pods with the given Status $STATUS"
      delete
   ;;
